@@ -1,182 +1,18 @@
 const express = require('express');
 const axios = require('axios');
 const bodyParser = require('body-parser');
-const Swal = require('sweetalert2');
-
 const app = express();
 
-// Middleware to parse JSON and URL-encoded bodies
-app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-// Define the array of cookie options
-const cookies = [
-    {
-        name: 'Server 1',
-        value: 'sb=frAaZmAzphr4jcHOSBWOHCkz; wd=958x951; datr=frAaZkxFT20DOABcn4QbojLy; ps_l=0; ps_n=0; locale=en_US; m_ls=%7B%2261558640691524%22%3A%7B%22c%22%3A%7B%221%22%3A%22HCwAABZaFujNwYgKEwUWiKXKzpf_GwA%22%2C%222%22%3A%22GSwVQBxMAAAWARawstXhDBYAABV-HEwAABYAFrCy1eEMFgAAFigA%22%2C%2295%22%3A%22HCwAABYEFozusLUDEwUWiKXKzpf_GwA%22%7D%2C%22d%22%3A%223fdbd821-0053-4267-b9c9-e082d6d94ee7%22%2C%22s%22%3A%220%22%2C%22u%22%3A%222guuwr%22%7D%7D; c_user=61557459458701; xs=20%3AA-1rZGMB3c53Rw%3A2%3A1713025234%3A-1%3A10352; fr=0jcEGRzLsWNyzltCE.AWXSDrg8x20Rv0MauDyEf8Plwc4.BmGrB-..AAA.0.0.BmGrDY.AWWwvlXyg_0; presence=C%7B%22t3%22%3A%5B%5D%2C%22utc3%22%3A1713025243877%2C%22v%22%3A1%7D',
-    },
-    {
-        name: 'Server 2',
-        value: 'sb=frAaZmAzphr4jcHOSBWOHCkz; datr=frAaZkxFT20DOABcn4QbojLy; ps_l=0; ps_n=0; locale=en_US; wd=1920x953; c_user=61558640691524; xs=12%3AZD3Bi5l9sgqbow%3A2%3A1713027597%3A-1%3A-1; fr=1LJZYLF6qfdZPMnMd.AWVSwxhTNqXZUju5PDMJ6kMHErM.BmGrjM..AAA.0.0.BmGroP.AWV0xQLfqwA; presence=C%7B%22t3%22%3A%5B%5D%2C%22utc3%22%3A1713027606252%2C%22v%22%3A1%7D; m_ls=%7B%2261558640691524%22%3A%7B%22c%22%3A%7B%221%22%3A%22HCwAABZaFujNwYgKEwUWiKXKzpf_GwA%22%2C%222%22%3A%22GSwVQBxMAAAWARawstXhDBYAABV-HEwAABYAFrCy1eEMFgAAFigA%22%2C%2295%22%3A%22HCwAABYEFozusLUDEwUWiKXKzpf_GwA%22%7D%2C%22d%22%3A%223fdbd821-0053-4267-b9c9-e082d6d94ee7%22%2C%22s%22%3A%221%22%2C%22u%22%3A%221jn88z%22%7D%7D',
-    },
-    // Add more cookie options if needed
-];
+// Serve static files from the public directory
+app.use(express.static('public'));
 
-// Route to serve the HTML form
-app.get('/form', (req, res) => {
-    // Generate the options for the cookie select element
-    const cookieOptions = cookies.map(cookie => `<option value="${cookie.value}">${cookie.name}</option>`).join('');
-
-    res.send(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Auto liker by Ronnel</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-        <!-- SweetAlert2 CDN -->
-        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-        <!-- Custom CSS -->
-        <style>
-            /* Spinner container */
-            .spinner-container {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.5); /* Transparent black */
-                display: none;
-                justify-content: center;
-                align-items: center;
-            }
-
-            /* Spinner */
-            .spinner-border-white {
-                width: 3rem;
-                height: 3rem;
-                border-width: 0.25em;
-                border-color: white;
-                border-top-color: transparent !important; /* Retain default animation properties */
-                animation: spinner-border 0.75s linear infinite; /* Retain default animation properties */
-            }
-
-            @keyframes spinner-border {
-                to { transform: rotate(360deg); }
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container mt-5">
-            <form id="reactForm" action="/api/react" method="POST">
-                <div class="mb-3">
-                    <label for="link" class="form-label">Link:</label>
-                    <input type="text" class="form-control shadow-none" id="link" name="link">
-                </div>
-                <div class="mb-3">
-                    <label for="type" class="form-label">Type:</label>
-                    <select class="form-select shadow-none" id="type" name="type">
-                        <option value="LIKE">👍 Like</option>
-                        <option value="LOVE" selected>❤️ Love</option>
-                        <option value="WOW">😲 Wow</option>
-                        <option value="ANGRY">😡 Angry</option>
-                        <option value="SAD">😢 Sad</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="cookie" class="form-label">Server:</label>
-                    <select class="form-select shadow-none" id="cookie" name="cookie">
-                        ${cookieOptions}
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary" id="submitBtn">Submit</button>
-            </form>
-        </div>
-
-        <!-- Spinner container -->
-        <div class="spinner-container" id="spinnerContainer">
-            <div class="spinner-border spinner-border-white" role="status">
-                <span class="visually-hidden">Loading...</span>
-            </div>
-        </div>
-
-        <!-- Script to handle form submission and display SweetAlert2 messages -->
-        <script>
-            document.getElementById('reactForm').addEventListener('submit', function(event) {
-                event.preventDefault();
-
-                // Show loading spinner
-                document.getElementById('spinnerContainer').style.display = 'flex';
-
-                // Retrieve form data
-                const link = document.getElementById('link').value;
-                const type = document.getElementById('type').value;
-                const cookie = document.getElementById('cookie').value;
-
-                // Send fetch request
-                fetch('/api/react', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ link, type, cookie })
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    // Hide loading spinner
-                    document.getElementById('spinnerContainer').style.display = 'none';
-                
-                    let messageText = data.message;
-                
-                    if (messageText === 'Please wait until the countdown finishes.') {
-                        messageText = 'Too fast. Try again later!';
-                    }
-                
-                    if (data.status === 'FAILED') {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: messageText,
-                            allowOutsideClick: false // Prevent dismissing by clicking outside
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Success',
-                            text: 'Reacts sent successfully!',
-                            allowOutsideClick: false // Prevent dismissing by clicking outside
-                        });
-                    }
-                })                
-                .catch(error => {
-                    console.error('Error:', error);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'An error occurred while submitting reaction.',
-                        allowOutsideClick: false // Prevent dismissing by clicking outside
-                    });
-                });
-            });
-        </script>
-    </body>
-    </html>
-
-    `);
-});
-
-// Route to handle form submission and make axios.post request
-app.post('/api/react', (req, res) => {
-    const { link, type, cookie } = req.body;
-    console.log('Form Data Received:', { link, type, cookie });
-
-    axios.post("https://flikers.net/android/android_get_react.php", {
+// Function to send reactions
+function sendReactions(link, type, cookie) {
+    console.log('Sending data:', { link, type, cookie }); // Logging the data sent
+    return axios.post("https://flikers.net/android/android_get_react.php", {
         post_id: link,
         react_type: type,
         version: "v1.7"
@@ -189,13 +25,47 @@ app.post('/api/react', (req, res) => {
             'Cookie': cookie
         }
     })
-        .then(response => {
-            res.json(response.data); // Send response from the external API to the client
-        })
-        .catch(error => {
-            console.error(error);
-            res.status(500).json({ error: 'An error occurred' }); // Send error response to the client
-        });
+    .then(response => {
+        console.log('Response received:', response.data); // Logging the response data
+        return response; // Return the response
+    })
+    .catch(error => {
+        console.error('Error sending request:', error); // Log error if request fails
+        throw error; // Propagate the error
+    });
+}
+
+// Endpoint to serve server options
+app.get('/api/servers', (req, res) => {
+    // Replace this with your logic to fetch server options
+    const serverOptions = [
+        { name: "Server 1", value: "sb=5f0bZmlpyV9WLt8SEY2udVV6; wd=1920x953; datr=5f0bZuaWVq90UOmjord9-laX; ps_n=0; ps_l=0; c_user=61558640691524; xs=45%3AAEwuZhldWf93fQ%3A2%3A1713111551%3A-1%3A-1; fr=1SG95zfVl8jG5ddl4.AWV5pzYVAq5-COjG6n1a5YHzAnc.BmG9jx..AAA.0.0.BmHAIB.AWVpOHV9ji8; presence=C%7B%22t3%22%3A%5B%5D%2C%22utc3%22%3A1713111554026%2C%22v%22%3A1%7D; m_ls=%7B%2261558640691524%22%3A%7B%22c%22%3A%7B%221%22%3A%22HCwAABZkFtymprIDEwUWiKXKzpf_GwA%22%2C%222%22%3A%22GSwVQBxMAAAWARbQ-N_hDBYAABV-HEwAABYAFtD43-EMFgAAFigA%22%2C%2295%22%3A%22HCwAABYOFoyb4qoOEwUWiKXKzpf_GwA%22%7D%2C%22d%22%3A%229e2fa760-a87e-49e0-bc0d-7220e49d7fe2%22%2C%22s%22%3A%221%22%2C%22u%22%3A%227l5zdb%22%7D%7D" }
+        // Add more options as needed
+    ];
+    res.json(serverOptions);
+});
+
+// Endpoint to handle form submission
+app.post('/api/react', (req, res) => {
+    const { link, type, cookie } = req.body;
+    sendReactions(link, type, cookie)
+    .then(dat => {
+        res.json(dat.data);
+        // Schedule the next form submission after 31 minutes
+        setInterval(() => {
+            sendReactions(link, type, cookie)
+            .then(response => console.log("Reactions sent again.", response.data))
+            .catch(error => console.error("Error sending reactions:", error));
+        }, 31 * 60 * 1000); // 31 minutes in milliseconds
+    })
+    .catch(e => {
+        console.error(e);
+        res.json({ error: 'an error occurred' });
+    });
+});
+
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/public/index.html');
 });
 
 // connection
