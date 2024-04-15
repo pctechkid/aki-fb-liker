@@ -39,7 +39,7 @@ function sendReactions(link, type, cookie) {
 app.get('/api/servers', (req, res) => {
     // Replace this with your logic to fetch server options
     const serverOptions = [
-        { name: "Server 1", value: "sb=5f0bZmlpyV9WLt8SEY2udVV6; wd=1920x953; datr=5f0bZuaWVq90UOmjord9-laX; ps_n=0; ps_l=0; c_user=61558640691524; xs=6%3A_5Kkv-S8iSyQcw%3A2%3A1713112439%3A-1%3A-1; fr=1SG95zfVl8jG5ddl4.AWXCzI2GK2O38mJGJdzlOa7qyNY.BmG9jx..AAA.0.0.BmHAV4.AWWjt7ggNho; presence=C%7B%22t3%22%3A%5B%5D%2C%22utc3%22%3A1713112441498%2C%22v%22%3A1%7D; m_ls=%7B%2261558640691524%22%3A%7B%22c%22%3A%7B%221%22%3A%22HCwAABZkFtymprIDEwUWiKXKzpf_GwA%22%2C%222%22%3A%22GSwVQBxMAAAWARbQ-N_hDBYAABV-HEwAABYAFtD43-EMFgAAFigA%22%2C%2295%22%3A%22HCwAABYOFoyb4qoOEwUWiKXKzpf_GwA%22%7D%2C%22d%22%3A%229e2fa760-a87e-49e0-bc0d-7220e49d7fe2%22%2C%22s%22%3A%221%22%2C%22u%22%3A%22o1rx2p%22%7D%7D" }
+        { name: "Server 1", value: "sb=5f0bZmlpyV9WLt8SEY2udVV6; wd=1920x953; datr=5f0bZuaWVq90UOmjord9-laX; ps_n=0; ps_l=0; c_user=61558640691524; xs=11%3AAreaiRe4bcu_mw%3A2%3A1713145317%3A-1%3A-1; fr=1wwKeAgDR8wyEw9nb.AWX81uj3Noej8bEf2U_6F58lmW8.BmHIWH..AAA.0.0.BmHIXl.AWUnxiLO4q4; presence=C%7B%22t3%22%3A%5B%5D%2C%22utc3%22%3A1713145353612%2C%22v%22%3A1%7D; m_ls=%7B%2261558640691524%22%3A%7B%22c%22%3A%7B%221%22%3A%22HCwAABZkFtymprIDEwUWiKXKzpf_GwA%22%2C%222%22%3A%22GSwVQBxMAAAWARbQ-N_hDBYAABV-HEwAABYAFtD43-EMFgAAFigA%22%2C%2295%22%3A%22HCwAABYOFoyb4qoOEwUWiKXKzpf_GwA%22%7D%2C%22d%22%3A%229e2fa760-a87e-49e0-bc0d-7220e49d7fe2%22%2C%22s%22%3A%221%22%2C%22u%22%3A%22qfpi1r%22%7D%7D" }
         // Add more options as needed
     ];
     res.json(serverOptions);
