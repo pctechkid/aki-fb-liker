@@ -65,5 +65,5 @@ app.listen(port, () => {
         if (responseData.status !== 'FAILED') {
             lastExecutionTime = Date.now(); // Update the last execution time
         }
-    }, 32 * 60 * 1000); // 32 minutes in milliseconds
+    }, 35 * 60 * 1000); // 32 minutes in milliseconds
 });
