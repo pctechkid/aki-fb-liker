@@ -43,6 +43,7 @@ app.post('/api/react', async (req, res) => {
 
         // Schedule the next form submission after 31 minutes
         setInterval(async () => {
+            console.log("Countdown started."); // Console log notification
             try {
                 const response = await sendReactions(link, type, cookie);
                 console.log("Reactions sent again.", response.data);
